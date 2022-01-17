@@ -1,5 +1,5 @@
 use crate::cache::cache_operations::RequestCached;
-use crate::config::collectibles_request_timeout;
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::providers::info::{DefaultInfoProvider, InfoProvider};
 use crate::utils::context::RequestContext;
 use crate::utils::errors::ApiResult;
@@ -25,7 +25,7 @@ pub async fn collectibles(
 
     Ok(content::Json(
         RequestCached::new_from_context(url, &context)
-            .request_timeout(collectibles_request_timeout())
+            .request_timeout(DEFAULT_CONFIGURATION.collectibles_request_timeout())
             .execute()
             .await?,
     ))

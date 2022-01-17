@@ -1,5 +1,5 @@
 use crate::cache::cache_operations::CacheResponse;
-use crate::config::{about_cache_duration, webhook_token};
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::providers::info::{DefaultInfoProvider, InfoProvider};
 use crate::routes::about::handlers;
 use crate::utils::context::RequestContext;
@@ -29,7 +29,7 @@ pub async fn get_chains_about(
     chain_id: String,
 ) -> ApiResult<content::Json<String>> {
     CacheResponse::new(&context)
-        .duration(about_cache_duration())
+        .duration(DEFAULT_CONFIGURATION.about_cache_duration())
         .resp_generator(|| handlers::chains_about(&context, &chain_id))
         .execute()
         .await
@@ -84,7 +84,7 @@ pub async fn get_master_copies(
     chain_id: String,
 ) -> ApiResult<content::Json<String>> {
     CacheResponse::new(&context)
-        .duration(about_cache_duration())
+        .duration(DEFAULT_CONFIGURATION.about_cache_duration())
         .resp_generator(|| handlers::get_master_copies(&context, chain_id.as_str()))
         .execute()
         .await
@@ -106,7 +106,7 @@ pub async fn backbone(
 #[doc(hidden)]
 #[get("/about/redis/<token>")]
 pub fn redis(context: RequestContext, token: String) -> ApiResult<String> {
-    if token != webhook_token() {
+    if token != DEFAULT_CONFIGURATION.webhook_token() {
         bail!("Invalid token");
     }
     Ok(context.cache().info().unwrap_or(String::new()))

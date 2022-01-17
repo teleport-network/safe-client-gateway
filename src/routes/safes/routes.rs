@@ -1,5 +1,5 @@
 use crate::cache::cache_operations::CacheResponse;
-use crate::config::owners_for_safes_cache_duration;
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::routes::safes::handlers::estimations;
 use crate::routes::safes::handlers::safes::{get_owners_for_safe, get_safe_info_ex};
 use crate::routes::safes::models::SafeTransactionEstimationRequest;
@@ -39,7 +39,7 @@ pub async fn get_owners(
 ) -> ApiResult<content::Json<String>> {
     CacheResponse::new(&context)
         .resp_generator(|| get_owners_for_safe(&context, &chain_id, &owner_address))
-        .duration(owners_for_safes_cache_duration())
+        .duration(DEFAULT_CONFIGURATION.owners_for_safes_cache_duration())
         .execute()
         .await
 }

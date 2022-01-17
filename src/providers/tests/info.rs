@@ -1,11 +1,8 @@
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::{
     cache::redis::create_service_cache,
     cache::Cache,
     common::models::{backend::chains::ChainInfo, page::Page},
-    config::{
-        chain_info_request_timeout, contract_info_request_timeout, safe_app_info_request_timeout,
-        safe_info_request_timeout, token_info_request_timeout,
-    },
     providers::{
         address_info::ContractInfo,
         info::{DefaultInfoProvider, InfoProvider, SafeAppInfo, SafeInfo, TokenInfo},
@@ -28,7 +25,9 @@ async fn default_info_provider_chain_info() {
 
     let mut mock_http_client = MockHttpClient::new();
     let mut chain_request = Request::new(request_uri.clone());
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -61,7 +60,9 @@ async fn default_info_provider_chain_info_not_found() {
 
     let mut mock_http_client = MockHttpClient::new();
     let mut chain_request = Request::new(request_uri.clone());
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -102,7 +103,9 @@ async fn default_info_provider_safe_info() {
 
     let mut mock_http_client = MockHttpClient::new();
     let mut chain_request = Request::new(request_uri.clone());
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -118,7 +121,9 @@ async fn default_info_provider_safe_info() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -153,7 +158,9 @@ async fn default_info_provider_safe_info_not_found() {
 
     let mut mock_http_client = MockHttpClient::new();
     let mut chain_request = Request::new(request_uri.clone());
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -169,7 +176,9 @@ async fn default_info_provider_safe_info_not_found() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -211,7 +220,9 @@ async fn default_info_provider_token_info() {
 
     let mut mock_http_client = MockHttpClient::new();
     let mut chain_request = Request::new(request_uri.clone());
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -226,7 +237,9 @@ async fn default_info_provider_token_info() {
     let mut token_request = Request::new(String::from(
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/tokens/?limit=10000",
     ));
-    token_request.timeout(Duration::from_millis(token_info_request_timeout()));
+    token_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.token_info_request_timeout(),
+    ));
     let page_tokens: Page<TokenInfo> = Page {
         next: None,
         previous: None,
@@ -267,7 +280,9 @@ async fn default_info_provider_token_info_request_failure() {
 
     let mut mock_http_client = MockHttpClient::new();
     let mut chain_request = Request::new(request_uri.clone());
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -282,7 +297,9 @@ async fn default_info_provider_token_info_request_failure() {
     let mut token_request = Request::new(String::from(
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/tokens/?limit=10000",
     ));
-    token_request.timeout(Duration::from_millis(token_info_request_timeout()));
+    token_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.token_info_request_timeout(),
+    ));
 
     mock_http_client
         .expect_get()
@@ -319,7 +336,9 @@ async fn default_info_provider_token_info_not_found_in_cache() {
 
     let mut mock_http_client = MockHttpClient::new();
     let mut chain_request = Request::new(request_uri.clone());
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -334,7 +353,9 @@ async fn default_info_provider_token_info_not_found_in_cache() {
     let mut token_request = Request::new(String::from(
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/tokens/?limit=10000",
     ));
-    token_request.timeout(Duration::from_millis(token_info_request_timeout()));
+    token_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.token_info_request_timeout(),
+    ));
     let page_tokens: Page<TokenInfo> = Page {
         next: None,
         previous: None,
@@ -398,7 +419,9 @@ async fn default_info_provider_safe_app_info() {
 
     let mut mock_http_client = MockHttpClient::new();
     let mut safe_app_request = Request::new(format!("{}/manifest.json", &origin_url));
-    safe_app_request.timeout(Duration::from_millis(safe_app_info_request_timeout()));
+    safe_app_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_app_info_request_timeout(),
+    ));
 
     mock_http_client
         .expect_get()
@@ -436,7 +459,9 @@ async fn default_info_provider_safe_app_info_not_found() {
 
     let mut mock_http_client = MockHttpClient::new();
     let mut safe_app_request = Request::new(format!("{}/manifest.json", &origin_url));
-    safe_app_request.timeout(Duration::from_millis(safe_app_info_request_timeout()));
+    safe_app_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_app_info_request_timeout(),
+    ));
 
     mock_http_client
         .expect_get()
@@ -474,7 +499,9 @@ async fn contract_info() {
     let mut mock_http_client = MockHttpClient::new();
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -490,7 +517,9 @@ async fn contract_info() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/contracts/{}/",
         &bip_contract_address
     ));
-    contract_info_request.timeout(Duration::from_millis(contract_info_request_timeout()));
+    contract_info_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.contract_info_request_timeout(),
+    ));
 
     mock_http_client
         .expect_get()
@@ -529,7 +558,9 @@ async fn contract_info_not_found() {
     let mut mock_http_client = MockHttpClient::new();
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -545,7 +576,9 @@ async fn contract_info_not_found() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/contracts/{}/",
         &bip_contract_address
     ));
-    contract_info_request.timeout(Duration::from_millis(contract_info_request_timeout()));
+    contract_info_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.contract_info_request_timeout(),
+    ));
 
     mock_http_client
         .expect_get()

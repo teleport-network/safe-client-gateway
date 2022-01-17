@@ -1,6 +1,6 @@
 use crate::cache::cache_operations::RequestCached;
 use crate::common::models::backend::safe_apps::SafeApp as BackendSafeApp;
-use crate::config::safe_apps_cache_duration;
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::routes::safe_apps::models::SafeApp;
 use crate::utils::context::RequestContext;
 use crate::utils::errors::ApiResult;
@@ -16,7 +16,7 @@ pub async fn safe_apps(
         client_url.as_deref().unwrap_or("")
     );
     let data = RequestCached::new_from_context(url, &context)
-        .cache_duration(safe_apps_cache_duration())
+        .cache_duration(DEFAULT_CONFIGURATION.safe_apps_cache_duration())
         .execute()
         .await?;
 

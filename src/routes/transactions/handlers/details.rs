@@ -4,7 +4,7 @@ use crate::cache::cache_operations::RequestCached;
 use crate::common::models::backend::transactions::{ModuleTransaction, MultisigTransaction};
 use crate::common::models::backend::transfers::Transfer;
 use crate::common::models::page::Page;
-use crate::config::transaction_request_timeout;
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::providers::info::{DefaultInfoProvider, InfoProvider};
 use crate::routes::transactions::models::details::TransactionDetails;
 use crate::routes::transactions::models::{TransactionIdParts, ID_SEPARATOR};
@@ -21,7 +21,7 @@ pub async fn get_multisig_transaction_details(
 ) -> ApiResult<TransactionDetails> {
     let url = core_uri!(info_provider, "/v1/multisig-transactions/{}/", safe_tx_hash)?;
     let body = RequestCached::new(url, &info_provider.client(), &info_provider.cache())
-        .request_timeout(transaction_request_timeout())
+        .request_timeout(DEFAULT_CONFIGURATION.transaction_request_timeout())
         .execute()
         .await?;
     let multisig_tx: MultisigTransaction = serde_json::from_str(&body)?;
@@ -54,7 +54,7 @@ async fn get_ethereum_transaction_details(
     )?;
     debug!("url: {}", url);
     let body = RequestCached::new(url, &info_provider.client(), &info_provider.cache())
-        .request_timeout(transaction_request_timeout())
+        .request_timeout(DEFAULT_CONFIGURATION.transaction_request_timeout())
         .execute()
         .await?;
     let transfers: Page<Transfer> = serde_json::from_str(&body)?;
@@ -89,7 +89,7 @@ async fn get_module_transaction_details(
 
     debug!("url: {}", url);
     let body = RequestCached::new(url, &info_provider.client(), &info_provider.cache())
-        .request_timeout(transaction_request_timeout())
+        .request_timeout(DEFAULT_CONFIGURATION.transaction_request_timeout())
         .execute()
         .await?;
     let transactions: Page<ModuleTransaction> = serde_json::from_str(&body)?;

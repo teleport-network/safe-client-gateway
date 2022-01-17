@@ -1,6 +1,6 @@
 use crate::cache::cache_operations::RequestCached;
 use crate::cache::Cache;
-use crate::config::{base_exchange_api_uri, exchange_api_cache_duration, short_error_duration};
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::utils::context::RequestContext;
 use crate::utils::errors::ApiResult;
 use crate::utils::http_client::HttpClient;
@@ -56,10 +56,10 @@ impl FiatInfoProvider {
     }
 
     async fn fetch_exchange(&self) -> ApiResult<Exchange> {
-        let url = base_exchange_api_uri();
+        let url = DEFAULT_CONFIGURATION.base_exchange_api_uri();
         let body = RequestCached::new(url, &self.client, &self.cache)
-            .cache_duration(exchange_api_cache_duration())
-            .error_cache_duration(short_error_duration())
+            .cache_duration(DEFAULT_CONFIGURATION.exchange_api_cache_duration())
+            .error_cache_duration(DEFAULT_CONFIGURATION.short_error_duration())
             .execute()
             .await?;
         serde_json::from_str::<Exchange>(&body)

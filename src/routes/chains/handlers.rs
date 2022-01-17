@@ -1,7 +1,7 @@
 use crate::cache::cache_operations::RequestCached;
 use crate::common::models::backend::chains::ChainInfo as BackendChainInfo;
 use crate::common::models::page::{Page, PageMetadata};
-use crate::config::{chain_info_cache_duration, chain_info_request_timeout};
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::providers::info::{DefaultInfoProvider, InfoProvider};
 use crate::routes::chains::models::ChainInfo as ServiceChainInfo;
 use crate::utils::context::RequestContext;
@@ -24,8 +24,8 @@ pub async fn get_chains_paginated(
     );
 
     let body = RequestCached::new_from_context(url, context)
-        .request_timeout(chain_info_request_timeout())
-        .cache_duration(chain_info_cache_duration())
+        .request_timeout(DEFAULT_CONFIGURATION.chain_info_request_timeout())
+        .cache_duration(DEFAULT_CONFIGURATION.chain_info_cache_duration())
         .execute()
         .await?;
 

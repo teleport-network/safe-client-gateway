@@ -2,9 +2,7 @@ use crate::cache::cache_operations::RequestCached;
 use crate::common::models::backend::transactions::{MultisigTransaction, Transaction};
 use crate::common::models::backend::transfers::Transfer;
 use crate::common::models::page::{Page, SafeList};
-use crate::config::{
-    owners_for_safes_cache_duration, transaction_request_timeout, transaction_service_auth_token,
-};
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::providers::info::{DefaultInfoProvider, InfoProvider};
 use crate::routes::safes::models::{SafeLastChanges, SafeState};
 use crate::utils::context::RequestContext;
@@ -60,7 +58,7 @@ async fn get_last_collectible(
     )?;
 
     let body = RequestCached::new(url, &info_provider.client(), &info_provider.cache())
-        .request_timeout(transaction_request_timeout())
+        .request_timeout(DEFAULT_CONFIGURATION.transaction_request_timeout())
         .execute()
         .await?;
     let transaction: Page<Transfer> = serde_json::from_str(&body)?;
@@ -93,7 +91,7 @@ async fn get_last_queued_tx(
     )?;
 
     let body = RequestCached::new(url, &info_provider.client(), &info_provider.cache())
-        .request_timeout(transaction_request_timeout())
+        .request_timeout(DEFAULT_CONFIGURATION.transaction_request_timeout())
         .execute()
         .await?;
     let transaction: Page<MultisigTransaction> = serde_json::from_str(&body)?;
@@ -121,7 +119,7 @@ async fn get_last_history_tx(
     )?;
 
     let body = RequestCached::new(url, &info_provider.client(), &info_provider.cache())
-        .request_timeout(transaction_request_timeout())
+        .request_timeout(DEFAULT_CONFIGURATION.transaction_request_timeout())
         .execute()
         .await?;
     let transaction: Page<Transaction> = serde_json::from_str(&body)?;
@@ -152,8 +150,11 @@ pub async fn get_owners_for_safe(
 
     let url = core_uri!(info_provider, "/v1/owners/{}/safes/", owner_address)?;
     let body = RequestCached::new_from_context(url, context)
-        .cache_duration(owners_for_safes_cache_duration())
-        .add_header(("Authorization", &transaction_service_auth_token()))
+        .cache_duration(DEFAULT_CONFIGURATION.owners_for_safes_cache_duration())
+        .add_header((
+            "Authorization",
+            &DEFAULT_CONFIGURATION.transaction_service_auth_token(),
+        ))
         .execute()
         .await?;
 

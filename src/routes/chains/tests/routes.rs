@@ -1,7 +1,7 @@
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::{
     common::models::backend::chains::ChainInfo as BackendChainInfo,
     common::models::page::Page,
-    config::chain_info_request_timeout,
     routes::chains::models::ChainInfo,
     tests::main::setup_rocket,
     utils::http_client::{MockHttpClient, Request, Response},
@@ -18,7 +18,9 @@ async fn paginated_chain_infos() {
 
     let mut mock_http_client = MockHttpClient::new();
     let mut chain_request = Request::new(request_uri.clone());
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)

@@ -1,6 +1,6 @@
 use crate::common::models::addresses::AddressEx;
 use crate::common::models::data_decoded::{DataDecoded, ParamValue, Parameter, ValueDecodedType};
-use crate::config::feature_flag_nested_decoding;
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::providers::ext::InfoProviderExt;
 use crate::providers::info::InfoProvider;
 use crate::routes::transactions::models::SettingsInfo;
@@ -83,7 +83,7 @@ impl DataDecoded {
         &self,
         info_provider: &(impl InfoProvider + Sync),
     ) -> Option<HashMap<String, AddressEx>> {
-        if !feature_flag_nested_decoding() {
+        if !DEFAULT_CONFIGURATION.feature_flag_nested_decoding() {
             return None;
         }
 

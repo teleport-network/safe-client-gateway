@@ -1,7 +1,7 @@
 use crate::cache::cache_operations::RequestCached;
 use crate::common::models::backend::balances::Balance as BalanceDto;
 use crate::common::models::backend::chains::NativeCurrency;
-use crate::config::{balances_cache_duration, balances_request_timeout};
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::providers::fiat::FiatInfoProvider;
 use crate::providers::info::{DefaultInfoProvider, InfoProvider};
 use crate::routes::balances::models::{Balance, Balances};
@@ -29,8 +29,8 @@ pub async fn balances(
     )?;
 
     let body = RequestCached::new_from_context(url, context)
-        .cache_duration(balances_cache_duration())
-        .request_timeout(balances_request_timeout())
+        .cache_duration(DEFAULT_CONFIGURATION.balances_cache_duration())
+        .request_timeout(DEFAULT_CONFIGURATION.balances_request_timeout())
         .execute()
         .await?;
     let backend_balances: Vec<BalanceDto> = serde_json::from_str(&body)?;

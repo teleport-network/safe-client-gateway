@@ -1,10 +1,7 @@
 extern crate dotenv;
 
 use crate::common::models::page::Page;
-use crate::config::{
-    chain_info_request_timeout, contract_info_request_timeout, safe_info_request_timeout,
-    token_info_request_timeout, transaction_request_timeout,
-};
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::providers::info::TokenInfo;
 use crate::routes::transactions::models::details::TransactionDetails;
 use crate::routes::transactions::tests::{MULTISIG_TX_DETAILS, POST_CONFIRMATION_RESULT};
@@ -23,7 +20,9 @@ async fn post_confirmation_success() {
         let mut mock_http_client = MockHttpClient::new();
 
         let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-        chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+        chain_request.timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+        ));
         mock_http_client
             .expect_get()
             .times(1)
@@ -56,7 +55,9 @@ async fn post_confirmation_success() {
         // TX DETAILS
         let mut details_request =
             Request::new(String::from("https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/multisig-transactions/0x2e4af4b451a493470f38625c5f78f710f02303eb32780896cb55357c00d48faa/"));
-        details_request.timeout(Duration::from_millis(transaction_request_timeout()));
+        details_request.timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.transaction_request_timeout(),
+        ));
 
         mock_http_client
             .expect_get()
@@ -71,7 +72,9 @@ async fn post_confirmation_success() {
 
         // safe info fetch for cancellations
         let mut safe_request = Request::new(String::from("https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/0x1230B3d59858296A31053C1b8562Ecf89A2f888b/"));
-        safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+        safe_request.timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+        ));
 
         mock_http_client
             .expect_get()
@@ -88,7 +91,9 @@ async fn post_confirmation_success() {
         let mut token_request = Request::new(String::from(
             "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/tokens/?limit=10000",
         ));
-        token_request.timeout(Duration::from_millis(token_info_request_timeout()));
+        token_request.timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.token_info_request_timeout(),
+        ));
         let page_tokens: Page<TokenInfo> = Page {
             next: None,
             previous: None,
@@ -155,7 +160,9 @@ async fn post_confirmation_confirmation_error() {
         let mut mock_http_client = MockHttpClient::new();
 
         let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-        chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+        chain_request.timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+        ));
         mock_http_client
             .expect_get()
             .times(1)
@@ -219,7 +226,9 @@ async fn post_confirmation_confirmation_success_tx_details_error() {
         let mut mock_http_client = MockHttpClient::new();
 
         let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-        chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+        chain_request.timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+        ));
         mock_http_client
             .expect_get()
             .times(1)
@@ -252,7 +261,9 @@ async fn post_confirmation_confirmation_success_tx_details_error() {
         // TX DETAILS
         let mut details_request =
             Request::new(String::from("https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/multisig-transactions/0x2e4af4b451a493470f38625c5f78f710f02303eb32780896cb55357c00d48faa/"));
-        details_request.timeout(Duration::from_millis(transaction_request_timeout()));
+        details_request.timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.transaction_request_timeout(),
+        ));
 
         mock_http_client
             .expect_get()
@@ -293,7 +304,9 @@ async fn tx_details_multisig_tx_success() {
         let mut mock_http_client = MockHttpClient::new();
 
         let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-        chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+        chain_request.timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+        ));
         mock_http_client
             .expect_get()
             .times(1)
@@ -308,7 +321,9 @@ async fn tx_details_multisig_tx_success() {
         // TransactionDetails
         let mut details_request =
             Request::new(String::from("https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/multisig-transactions/0x2e4af4b451a493470f38625c5f78f710f02303eb32780896cb55357c00d48faa/"));
-        details_request.timeout(Duration::from_millis(transaction_request_timeout()));
+        details_request.timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.transaction_request_timeout(),
+        ));
 
         mock_http_client
             .expect_get()
@@ -323,7 +338,9 @@ async fn tx_details_multisig_tx_success() {
 
         // SafeInfo fetch for cancellations
         let mut safe_request = Request::new(String::from("https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/0x1230B3d59858296A31053C1b8562Ecf89A2f888b/"));
-        safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+        safe_request.timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+        ));
 
         mock_http_client
             .expect_get()
@@ -340,7 +357,9 @@ async fn tx_details_multisig_tx_success() {
         let mut token_request = Request::new(String::from(
             "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/tokens/?limit=10000",
         ));
-        token_request.timeout(Duration::from_millis(token_info_request_timeout()));
+        token_request.timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.token_info_request_timeout(),
+        ));
         let page_tokens: Page<TokenInfo> = Page {
             next: None,
             previous: None,
@@ -365,7 +384,9 @@ async fn tx_details_multisig_tx_success() {
         // The Transfer target gets requested multiple times, but caching reduces it to once
         let mut known_address_request = Request::new(String::from("https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/contracts/0xF353eBBa77e5E71c210599236686D51cA1F88b84/"));
 
-        known_address_request.timeout(Duration::from_millis(contract_info_request_timeout()));
+        known_address_request.timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.contract_info_request_timeout(),
+        ));
         mock_http_client
             .expect_get()
             .times(1)

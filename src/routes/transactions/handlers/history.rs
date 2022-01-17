@@ -3,7 +3,7 @@ extern crate reqwest;
 use crate::cache::cache_operations::RequestCached;
 use crate::common::models::backend::transactions::{CreationTransaction, Transaction};
 use crate::common::models::page::{Page, PageMetadata};
-use crate::config::transaction_request_timeout;
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::providers::info::{DefaultInfoProvider, InfoProvider};
 use crate::routes::transactions::handlers::offset_page_meta;
 use crate::routes::transactions::models::summary::{
@@ -146,7 +146,7 @@ async fn fetch_backend_paged_txs(
     log::debug!("cursor: {:#?}", &cursor);
     log::debug!("page_metadata: {:#?}", &page_metadata);
     let body = RequestCached::new_from_context(url, context)
-        .request_timeout(transaction_request_timeout())
+        .request_timeout(DEFAULT_CONFIGURATION.transaction_request_timeout())
         .execute()
         .await?;
     Ok(serde_json::from_str::<Page<Transaction>>(&body)?)
@@ -237,7 +237,7 @@ pub(super) async fn get_creation_transaction_summary(
     let url = core_uri!(info_provider, "/v1/safes/{}/creation/", safe)?;
     debug!("{}", &url);
     let body = RequestCached::new_from_context(url, context)
-        .request_timeout(transaction_request_timeout())
+        .request_timeout(DEFAULT_CONFIGURATION.transaction_request_timeout())
         .execute()
         .await?;
 

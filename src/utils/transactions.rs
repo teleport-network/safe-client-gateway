@@ -1,6 +1,6 @@
 use crate::cache::cache_operations::RequestCached;
 use crate::common::models::backend::transactions::MultisigTransaction;
-use crate::config::transaction_request_timeout;
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::providers::info::InfoProvider;
 use crate::providers::info::SAFE_V_1_3_0;
 use crate::utils::errors::ApiResult;
@@ -135,7 +135,7 @@ async fn fetch_cancellation_tx(
 ) -> Option<MultisigTransaction> {
     let url = core_uri!(info_provider, "/v1/multisig-transactions/{}/", safe_tx_hash).ok()?;
     let body = RequestCached::new(url, &info_provider.client(), &info_provider.cache())
-        .request_timeout(transaction_request_timeout())
+        .request_timeout(DEFAULT_CONFIGURATION.transaction_request_timeout())
         .execute()
         .await
         .ok();

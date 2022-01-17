@@ -1,8 +1,6 @@
 use crate::common::models::data_decoded::Operation;
 use crate::common::models::page::SafeList;
-use crate::config::{
-    chain_info_request_timeout, safe_info_request_timeout, transaction_request_timeout,
-};
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::routes::safes::models::{
     SafeState, SafeTransactionEstimation, SafeTransactionEstimationRequest,
     SafeTransactionEstimationV2,
@@ -21,7 +19,9 @@ async fn get_safe_info() {
     let safe_address = "0x4cb09344de5bCCD45F045c5Defa0E0452869FF0f";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -38,7 +38,9 @@ async fn get_safe_info() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         &safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -72,7 +74,9 @@ async fn get_safe_info() {
         safe_address
     ));
 
-    request_last_collectible.timeout(Duration::from_millis(transaction_request_timeout()));
+    request_last_collectible.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.transaction_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -93,7 +97,9 @@ async fn get_safe_info() {
         &limit=1",
         safe_address,
     ));
-    request_last_queued_tx.timeout(Duration::from_millis(transaction_request_timeout()));
+    request_last_queued_tx.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.transaction_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -113,7 +119,9 @@ async fn get_safe_info() {
         &executed=true",
         safe_address
     ));
-    request_last_history_tx.timeout(Duration::from_millis(transaction_request_timeout()));
+    request_last_history_tx.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.transaction_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -166,7 +174,9 @@ async fn get_safe_info_not_found() {
     };
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -183,7 +193,9 @@ async fn get_safe_info_not_found() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         &safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -237,7 +249,9 @@ async fn get_owners() {
     let expected = serde_json::from_str::<SafeList>(&safe_list).unwrap();
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -298,7 +312,9 @@ async fn get_owners_not_found() {
     };
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -354,7 +370,9 @@ async fn post_safe_gas_estimation() {
     let safe_address = "0xd6f5Bef6bb4acD235CF85c0ce196316d10785d67";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -418,7 +436,9 @@ async fn post_safe_gas_estimation() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         &safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -470,7 +490,9 @@ async fn post_safe_gas_estimation_no_queued_tx() {
     let safe_address = "0xd6f5Bef6bb4acD235CF85c0ce196316d10785d67";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -535,7 +557,9 @@ async fn post_safe_gas_estimation_no_queued_tx() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         &safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -587,7 +611,9 @@ async fn post_safe_gas_estimation_delayed_indexing() {
     let safe_address = "0xd6f5Bef6bb4acD235CF85c0ce196316d10785d67";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -652,7 +678,9 @@ async fn post_safe_gas_estimation_delayed_indexing() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         &safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -706,7 +734,9 @@ async fn post_safe_gas_estimation_estimation_error() {
     \"arguments\":[\"0xd6f5Bef6bb4acd235CF85c0ce196316d10785d67\"]}";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -768,7 +798,9 @@ async fn post_safe_gas_estimation_estimation_error() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         &safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -815,7 +847,9 @@ async fn post_safe_gas_estimation_nonce_error() {
     let safe_address = "0xd6f5Bef6bb4acD235CF85c0ce196316d10785d67";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -851,7 +885,9 @@ async fn post_safe_gas_estimation_nonce_error() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         &safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -891,7 +927,9 @@ async fn post_safe_gas_estimation_safe_error() {
     let safe_address = "0xd6f5Bef6bb4acD235CF85c0ce196316d10785d67";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -908,7 +946,9 @@ async fn post_safe_gas_estimation_safe_error() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         &safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -948,7 +988,9 @@ async fn post_safe_gas_estimation_v2() {
     let safe_address = "0xd6f5Bef6bb4acD235CF85c0ce196316d10785d67";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -1012,7 +1054,9 @@ async fn post_safe_gas_estimation_v2() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         &safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -1064,7 +1108,9 @@ async fn post_safe_gas_estimation_v2_no_queued_tx() {
     let safe_address = "0xd6f5Bef6bb4acD235CF85c0ce196316d10785d67";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -1129,7 +1175,9 @@ async fn post_safe_gas_estimation_v2_no_queued_tx() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         &safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -1181,7 +1229,9 @@ async fn post_safe_gas_estimation_v2_delayed_indexing() {
     let safe_address = "0xd6f5Bef6bb4acD235CF85c0ce196316d10785d67";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -1246,7 +1296,9 @@ async fn post_safe_gas_estimation_v2_delayed_indexing() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         &safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -1300,7 +1352,9 @@ async fn post_safe_gas_estimation_v2_estimation_error() {
     \"arguments\":[\"0xd6f5Bef6bb4acd235CF85c0ce196316d10785d67\"]}";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -1362,7 +1416,9 @@ async fn post_safe_gas_estimation_v2_estimation_error() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         &safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -1409,7 +1465,9 @@ async fn post_safe_gas_estimation_v2_nonce_error() {
     let safe_address = "0xd6f5Bef6bb4acD235CF85c0ce196316d10785d67";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -1445,7 +1503,9 @@ async fn post_safe_gas_estimation_v2_nonce_error() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         &safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -1485,7 +1545,9 @@ async fn post_safe_gas_estimation_v2_safe_error() {
     let safe_address = "0xd6f5Bef6bb4acD235CF85c0ce196316d10785d67";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
         .expect_get()
@@ -1502,7 +1564,9 @@ async fn post_safe_gas_estimation_v2_safe_error() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/{}/",
         &safe_address
     ));
-    safe_request.timeout(Duration::from_millis(safe_info_request_timeout()));
+    safe_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.safe_info_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)

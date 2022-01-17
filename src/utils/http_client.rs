@@ -1,6 +1,4 @@
-use crate::config::default_request_timeout;
-#[cfg(not(test))]
-use crate::config::internal_client_connect_timeout;
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::utils::errors::{ApiError, ApiResult};
 use core::time::Duration;
 use mockall::automock;
@@ -20,7 +18,7 @@ impl Request {
         Request {
             url,
             body: None,
-            timeout: Duration::from_millis(default_request_timeout()),
+            timeout: Duration::from_millis(DEFAULT_CONFIGURATION.default_request_timeout()),
             headers: HashMap::default(),
         }
     }
@@ -149,7 +147,9 @@ pub fn setup_http_client() -> impl HttpClient {
 #[cfg(not(test))]
 pub fn setup_http_client() -> impl HttpClient {
     reqwest::Client::builder()
-        .connect_timeout(Duration::from_millis(internal_client_connect_timeout()))
+        .connect_timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.internal_client_connect_timeout(),
+        ))
         .build()
         .unwrap()
 }

@@ -1,21 +1,20 @@
-use crate::cache::cache_op_executors::{cache_response, invalidate, request_cached};
-use crate::cache::{Cache, CACHE_REQS_PREFIX, CACHE_REQS_RESP_PREFIX, CACHE_RESP_PREFIX};
-use crate::config::{
-    base_config_service_uri, default_request_timeout, request_cache_duration,
-    request_error_cache_duration,
-};
-use crate::providers::info::generate_token_key;
-use crate::utils::context::RequestContext;
-use crate::utils::errors::ApiResult;
-use crate::utils::http_client::HttpClient;
+use std::collections::HashMap;
+use std::future::Future;
+use std::sync::Arc;
+
 use rocket::futures::future::BoxFuture;
 use rocket::futures::FutureExt;
 use rocket::response::content;
 use serde::Deserialize;
 use serde::Serialize;
-use std::collections::HashMap;
-use std::future::Future;
-use std::sync::Arc;
+
+use crate::cache::cache_op_executors::{cache_response, invalidate, request_cached};
+use crate::cache::{Cache, CACHE_REQS_PREFIX, CACHE_REQS_RESP_PREFIX, CACHE_RESP_PREFIX};
+use crate::config::DEFAULT_CONFIGURATION;
+use crate::providers::info::generate_token_key;
+use crate::utils::context::RequestContext;
+use crate::utils::errors::ApiResult;
+use crate::utils::http_client::HttpClient;
 
 pub struct Invalidate {
     pub(super) cache: Arc<dyn Cache>,
@@ -75,7 +74,7 @@ impl InvalidationPattern {
             InvalidationPattern::Contracts => String::from("*contract*"),
             InvalidationPattern::Tokens { chain_id } => generate_token_key(chain_id),
             InvalidationPattern::Chains => {
-                format!("*{}*", base_config_service_uri())
+                format!("*{}*", DEFAULT_CONFIGURATION.base_config_service_uri())
             }
         }
     }
@@ -120,7 +119,7 @@ where
         CacheResponse {
             key: context.request_id.to_string(),
             cache: context.cache(),
-            duration: request_cache_duration(),
+            duration: DEFAULT_CONFIGURATION.request_cache_duration(),
             resp_generator: None,
         }
     }
@@ -165,9 +164,9 @@ impl RequestCached {
             client: client.clone(),
             cache: cache.clone(),
             url,
-            request_timeout: default_request_timeout(),
-            cache_duration: request_cache_duration(),
-            error_cache_duration: request_error_cache_duration(),
+            request_timeout: DEFAULT_CONFIGURATION.default_request_timeout(),
+            cache_duration: DEFAULT_CONFIGURATION.request_cache_duration(),
+            error_cache_duration: DEFAULT_CONFIGURATION.request_error_cache_duration(),
             cache_all_errors: false,
             headers: HashMap::default(),
         }
@@ -178,9 +177,9 @@ impl RequestCached {
             client: context.http_client(),
             cache: context.cache(),
             url,
-            request_timeout: default_request_timeout(),
-            cache_duration: request_cache_duration(),
-            error_cache_duration: request_error_cache_duration(),
+            request_timeout: DEFAULT_CONFIGURATION.default_request_timeout(),
+            cache_duration: DEFAULT_CONFIGURATION.request_cache_duration(),
+            error_cache_duration: DEFAULT_CONFIGURATION.request_error_cache_duration(),
             cache_all_errors: false,
             headers: HashMap::new(),
         }

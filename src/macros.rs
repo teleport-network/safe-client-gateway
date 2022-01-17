@@ -1,5 +1,5 @@
 use crate::common::models::backend::chains::ChainInfo;
-use crate::config::vpc_transaction_service_uri;
+use crate::config::DEFAULT_CONFIGURATION;
 macro_rules! concat_parts {
     ($parts_head:expr) => {
         // `stringify!` will convert the expression *as it is* into a string.
@@ -68,7 +68,7 @@ macro_rules! to_hex_string {
 }
 
 pub fn get_transaction_service_host(chain_info: ChainInfo) -> String {
-    if vpc_transaction_service_uri() {
+    if DEFAULT_CONFIGURATION.vpc_transaction_service_uri() {
         chain_info.vpc_transaction_service
     } else {
         chain_info.transaction_service
@@ -96,7 +96,7 @@ macro_rules! core_uri {
 #[macro_export]
 macro_rules! config_uri {
     ($path:expr) => {{
-        format!("{}{}", $crate::config::base_config_service_uri(), $path)
+        format!("{}{}", $crate::config::DEFAULT_CONFIGURATION.base_config_service_uri(), $path)
     }};
     ($path:literal, $($arg:tt)*) => {{
         let full_path: String = format!($path, $($arg)*);

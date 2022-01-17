@@ -1,5 +1,5 @@
 use crate::common::models::data_decoded::DataDecoded;
-use crate::config::{chain_info_request_timeout, contract_info_request_timeout};
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::providers::address_info::ContractInfo;
 use crate::tests::main::setup_rocket;
 use crate::utils::errors::{ApiError, ErrorDetails};
@@ -13,7 +13,9 @@ use serde_json::json;
 #[rocket::async_test]
 async fn data_decoded() {
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
 
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
@@ -79,7 +81,9 @@ async fn data_decoded_error() {
     };
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
 
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
@@ -136,7 +140,9 @@ async fn data_decoded_error() {
 async fn get_contract() {
     let bip_contract_address = "0x00000000000045166C45aF0FC6E4Cf31D9E14B9A";
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
 
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
@@ -154,7 +160,9 @@ async fn get_contract() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/contracts/{}/",
         &bip_contract_address
     ));
-    contract_info_request.timeout(Duration::from_millis(contract_info_request_timeout()));
+    contract_info_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.contract_info_request_timeout(),
+    ));
 
     mock_http_client
         .expect_get()
@@ -201,7 +209,9 @@ async fn get_contract_not_found() {
     };
     let bip_contract_address = "0x00000000000045166C45aF0FC6E4Cf31D9E14B9A";
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
 
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
@@ -219,7 +229,9 @@ async fn get_contract_not_found() {
         "https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/contracts/{}/",
         &bip_contract_address
     ));
-    contract_info_request.timeout(Duration::from_millis(contract_info_request_timeout()));
+    contract_info_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.contract_info_request_timeout(),
+    ));
 
     mock_http_client
         .expect_get()

@@ -1,6 +1,6 @@
 extern crate reqwest;
 
-use crate::config::{build_number, version};
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::providers::info::{DefaultInfoProvider, InfoProvider};
 use crate::routes::about::models::{About, ChainAbout};
 use crate::routes::safes::models::Implementation;
@@ -24,8 +24,8 @@ pub async fn chains_about(context: &RequestContext, chain_id: &str) -> ApiResult
 pub fn about() -> About {
     About {
         name: env!("CARGO_PKG_NAME").to_string(),
-        version: version(),
-        build_number: build_number(),
+        version: DEFAULT_CONFIGURATION.version(),
+        build_number: DEFAULT_CONFIGURATION.build_number(),
     }
 }
 

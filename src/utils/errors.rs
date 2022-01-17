@@ -1,4 +1,4 @@
-use crate::config::log_all_error_responses;
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::utils::http_client::Response as HttpClientResponse;
 use reqwest::StatusCode;
 use rocket::http::{ContentType, Status};
@@ -111,7 +111,9 @@ impl fmt::Display for ApiError {
 
 impl<'r> Responder<'r, 'static> for ApiError {
     fn respond_to(self, request: &'r Request<'_>) -> response::Result<'static> {
-        if log_all_error_responses() || (self.status >= 500 && self.status < 600) {
+        if DEFAULT_CONFIGURATION.log_all_error_responses()
+            || (self.status >= 500 && self.status < 600)
+        {
             log::error!(
                 "ERR::{}::{}::{}",
                 self.status,

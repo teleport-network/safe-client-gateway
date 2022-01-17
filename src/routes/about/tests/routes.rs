@@ -1,7 +1,7 @@
 extern crate dotenv;
 
 use crate::cache::MockCache;
-use crate::config::{build_number, chain_info_request_timeout, version, webhook_token};
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::routes::about::models::{About, ChainAbout};
 use crate::routes::safes::models::Implementation;
 use crate::tests::main::{setup_rocket, setup_rocket_with_mock_cache};
@@ -31,8 +31,8 @@ async fn get_chains_about() {
             .to_string(),
         about: About {
             name: env!("CARGO_PKG_NAME").to_string(),
-            version: version(),
-            build_number: build_number(),
+            version: DEFAULT_CONFIGURATION.version(),
+            build_number: DEFAULT_CONFIGURATION.build_number(),
         },
     };
 
@@ -64,8 +64,8 @@ async fn get_about() {
     };
     let expected = About {
         name: env!("CARGO_PKG_NAME").to_string(),
-        version: version(),
-        build_number: build_number(),
+        version: DEFAULT_CONFIGURATION.version(),
+        build_number: DEFAULT_CONFIGURATION.build_number(),
     };
 
     let client = Client::tracked(setup_rocket(
@@ -91,7 +91,9 @@ async fn get_about() {
 async fn get_master_copies() {
     let chain_request = {
         let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 137));
-        chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+        chain_request.timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+        ));
         chain_request
     };
     let mock_http_client = {
@@ -155,7 +157,9 @@ async fn get_master_copies() {
 async fn get_backbone() {
     let chain_request = {
         let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 137));
-        chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+        chain_request.timeout(Duration::from_millis(
+            DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+        ));
         chain_request
     };
     let mock_http_client = {
@@ -226,7 +230,10 @@ async fn get_redis() {
     .await
     .expect("valid rocket instance");
     let response = {
-        let mut response = client.get(format!("/about/redis/{}", webhook_token()));
+        let mut response = client.get(format!(
+            "/about/redis/{}",
+            DEFAULT_CONFIGURATION.webhook_token()
+        ));
         response.add_header(Header::new("Host", "test.gnosis.io"));
         response.dispatch().await
     };

@@ -1,4 +1,4 @@
-use crate::config::{chain_info_request_timeout, collectibles_request_timeout};
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::tests::main::setup_rocket;
 use crate::utils::errors::{ApiError, ErrorDetails};
 use crate::utils::http_client::{MockHttpClient, Request, Response};
@@ -11,7 +11,9 @@ use serde_json::json;
 #[rocket::async_test]
 async fn collectibles() {
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
 
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
@@ -26,7 +28,9 @@ async fn collectibles() {
         });
 
     let mut collectibles_request = Request::new(String::from("https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/0x1230B3d59858296A31053C1b8562Ecf89A2f888b/collectibles/?trusted=false&exclude_spam=true"));
-    collectibles_request.timeout(Duration::from_millis(collectibles_request_timeout()));
+    collectibles_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.collectibles_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)
@@ -69,7 +73,9 @@ async fn collectibles_not_found() {
     };
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
 
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
@@ -84,7 +90,9 @@ async fn collectibles_not_found() {
         });
 
     let mut collectibles_request = Request::new(String::from("https://safe-transaction.rinkeby.staging.gnosisdev.com/api/v1/safes/0x1230B3d59858296A31053C1b8562Ecf89A2f888b/collectibles/?trusted=false&exclude_spam=true"));
-    collectibles_request.timeout(Duration::from_millis(collectibles_request_timeout()));
+    collectibles_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.collectibles_request_timeout(),
+    ));
     mock_http_client
         .expect_get()
         .times(1)

@@ -2,7 +2,7 @@ use rocket::futures::FutureExt;
 use rocket::response::content;
 
 use crate::cache::cache_operations::CacheResponse;
-use crate::config::{balances_cache_duration, feature_flag_balances_rate_implementation};
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::routes::balances::handlers;
 use crate::routes::balances::handlers::fiat_codes;
 use crate::routes::balances::handlers_v2;
@@ -40,9 +40,9 @@ pub async fn get_balances(
     exclude_spam: Option<bool>,
 ) -> ApiResult<content::Json<String>> {
     CacheResponse::new(&context)
-        .duration(balances_cache_duration())
+        .duration(DEFAULT_CONFIGURATION.balances_cache_duration())
         .resp_generator(|| {
-            if feature_flag_balances_rate_implementation() {
+            if DEFAULT_CONFIGURATION.feature_flag_balances_rate_implementation() {
                 handlers_v2::balances(
                     &context,
                     chain_id.as_str(),

@@ -1,4 +1,4 @@
-use crate::config;
+use crate::config::DEFAULT_CONFIGURATION;
 use chrono::Utc;
 use rocket::fairing::{Fairing, Info, Kind};
 use rocket::http::uri::Path;
@@ -20,7 +20,7 @@ impl Fairing for PerformanceMonitor {
     }
 
     async fn on_response<'r>(&self, request: &'r Request<'_>, response: &mut Response<'r>) {
-        if rand::random::<f32>() <= config::log_threshold() {
+        if rand::random::<f32>() <= DEFAULT_CONFIGURATION.log_threshold() {
             let request_path = request.uri().path();
 
             let chain_id = extract_chain_id(&request_path);

@@ -1,5 +1,5 @@
 use crate::cache::Cache;
-use crate::config::{redis_scan_count, redis_uri};
+use crate::config::DEFAULT_CONFIGURATION;
 use r2d2::{Pool, PooledConnection};
 use redis::{self, pipe, Commands, FromRedisValue, Iter, ToRedisArgs};
 
@@ -13,7 +13,7 @@ pub fn create_service_cache() -> ServiceCache {
 }
 
 fn create_pool() -> RedisPool {
-    let client = redis::Client::open(redis_uri()).unwrap();
+    let client = redis::Client::open(DEFAULT_CONFIGURATION.redis_uri()).unwrap();
     Pool::builder().max_size(15).build(client).unwrap()
 }
 
@@ -55,7 +55,11 @@ impl Cache for ServiceCache {
     fn invalidate_pattern(&self, pattern: &str) {
         pipeline_delete(
             &mut self.conn(),
-            scan_match_count(&mut self.conn(), pattern, redis_scan_count()),
+            scan_match_count(
+                &mut self.conn(),
+                pattern,
+                DEFAULT_CONFIGURATION.redis_scan_count(),
+            ),
         );
     }
 

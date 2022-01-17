@@ -1,4 +1,4 @@
-use crate::config::chain_info_request_timeout;
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::routes::notifications::handlers::build_backend_request;
 use crate::routes::notifications::models::{
     DeviceData, DeviceType, NotificationRegistrationRequest, SafeRegistration,
@@ -17,7 +17,9 @@ async fn delete_notification_success() {
     let safe_address = "0x4cb09344de5bCCD45F045c5Defa0E0452869FF0f";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
 
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
@@ -74,7 +76,9 @@ async fn delete_notification_error() {
     let safe_address = "0x4cb09344de5bCCD45F045c5Defa0E0452869FF0f";
 
     let mut chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
 
     let mut mock_http_client = MockHttpClient::new();
     mock_http_client
@@ -159,7 +163,9 @@ async fn post_notification_success() {
     let mut mock_http_client = MockHttpClient::new();
 
     let mut rinkeby_chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    rinkeby_chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    rinkeby_chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
 
     mock_http_client
         .expect_get()
@@ -173,7 +179,9 @@ async fn post_notification_success() {
         });
 
     let mut polygon_chain_request = Request::new(config_uri!("/v1/chains/{}/", 137));
-    polygon_chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    polygon_chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
 
     mock_http_client
         .expect_get()
@@ -282,7 +290,9 @@ async fn post_notification_error() {
     let mut mock_http_client = MockHttpClient::new();
 
     let mut rinkeby_chain_request = Request::new(config_uri!("/v1/chains/{}/", 4));
-    rinkeby_chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    rinkeby_chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
 
     mock_http_client
         .expect_get()
@@ -296,7 +306,9 @@ async fn post_notification_error() {
         });
 
     let mut polygon_chain_request = Request::new(config_uri!("/v1/chains/{}/", 137));
-    polygon_chain_request.timeout(Duration::from_millis(chain_info_request_timeout()));
+    polygon_chain_request.timeout(Duration::from_millis(
+        DEFAULT_CONFIGURATION.chain_info_request_timeout(),
+    ));
 
     mock_http_client
         .expect_get()

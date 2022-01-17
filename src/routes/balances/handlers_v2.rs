@@ -8,10 +8,7 @@ use crate::cache::cache_operations::RequestCached;
 use crate::common::models::backend::balances_v2::Balance as BalanceDto;
 use crate::common::models::backend::balances_v2::TokenPrice as BackendTokenPrice;
 use crate::common::models::backend::chains::NativeCurrency;
-use crate::config::{
-    balances_core_request_cache_duration, balances_request_timeout,
-    concurrent_balance_token_requests, token_price_cache_duration,
-};
+use crate::config::DEFAULT_CONFIGURATION;
 use crate::providers::fiat::FiatInfoProvider;
 use crate::providers::info::{DefaultInfoProvider, InfoProvider};
 use crate::routes::balances::models::{Balance, Balances, TokenPrice};
@@ -37,8 +34,8 @@ pub async fn balances(
     )?;
 
     let body = RequestCached::new_from_context(url, context)
-        .cache_duration(balances_core_request_cache_duration())
-        .request_timeout(balances_request_timeout())
+        .cache_duration(DEFAULT_CONFIGURATION.balances_core_request_cache_duration())
+        .request_timeout(DEFAULT_CONFIGURATION.balances_request_timeout())
         .execute()
         .await?;
     let backend_balances: Vec<BalanceDto> = serde_json::from_str(&body)?;
@@ -106,7 +103,7 @@ async fn get_token_prices(
     // We collect the TokenPrice which were successful – unsuccessful ones are ignored
     return stream::iter(token_addresses)
         .map(|token_address| get_token_usd_rate(context, token_address, info_provider))
-        .buffer_unordered(concurrent_balance_token_requests())
+        .buffer_unordered(DEFAULT_CONFIGURATION.concurrent_balance_token_requests())
         .filter_map(|t| async move {
             match t {
                 Ok(token_price) => Some(token_price),
@@ -136,7 +133,7 @@ async fn get_token_usd_rate(
     let url = core_uri!(info_provider, "/v1/tokens/{}/prices/usd/", token_address)?;
 
     let body = RequestCached::new_from_context(url, context)
-        .cache_duration(token_price_cache_duration())
+        .cache_duration(DEFAULT_CONFIGURATION.token_price_cache_duration())
         .execute()
         .await?;
     let response: BackendTokenPrice = serde_json::from_str(&body)?;

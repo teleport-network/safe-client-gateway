@@ -1,202 +1,268 @@
 use std::env;
 use std::str::FromStr;
 
+use lazy_static::lazy_static;
+use mockall::automock;
+
 #[cfg(test)]
 mod tests;
 
-pub fn redis_uri() -> String {
-    env::var("REDIS_URI").expect("REDIS_URI missing in env")
+#[automock]
+pub trait Configuration {
+    fn redis_uri(self: &Self) -> String;
+    fn base_config_service_uri(self: &Self) -> String;
+    fn base_exchange_api_uri(self: &Self) -> String;
+    fn webhook_token(self: &Self) -> String;
+    fn transaction_service_auth_token(self: &Self) -> String;
+    fn scheme(self: &Self) -> String;
+    fn indefinite_timeout(self: &Self) -> usize;
+    fn short_error_duration(self: &Self) -> usize;
+    fn long_error_duration(self: &Self) -> usize;
+    fn safe_info_cache_duration(self: &Self) -> usize;
+    fn address_info_cache_duration(self: &Self) -> usize;
+    fn token_info_cache_duration(self: &Self) -> usize;
+    fn chain_info_cache_duration(self: &Self) -> usize;
+    fn chain_info_response_cache_duration(self: &Self) -> usize;
+    fn exchange_api_cache_duration(self: &Self) -> usize;
+    fn request_cache_duration(self: &Self) -> usize;
+    fn about_cache_duration(self: &Self) -> usize;
+    fn balances_cache_duration(self: &Self) -> usize;
+    fn balances_core_request_cache_duration(self: &Self) -> usize;
+    fn safe_app_manifest_cache_duration(self: &Self) -> usize;
+    fn owners_for_safes_cache_duration(self: &Self) -> usize;
+    fn safe_apps_cache_duration(self: &Self) -> usize;
+    fn token_price_cache_duration(self: &Self) -> usize;
+    fn tx_queued_cache_duration(self: &Self) -> usize;
+    fn internal_client_connect_timeout(self: &Self) -> u64;
+    fn safe_app_info_request_timeout(self: &Self) -> u64;
+    fn transaction_request_timeout(self: &Self) -> u64;
+    fn safe_info_request_timeout(self: &Self) -> u64;
+    fn token_info_request_timeout(self: &Self) -> u64;
+    fn chain_info_request_timeout(self: &Self) -> u64;
+    fn contract_info_request_timeout(self: &Self) -> u64;
+    fn balances_request_timeout(self: &Self) -> u64;
+    fn collectibles_request_timeout(self: &Self) -> u64;
+    fn default_request_timeout(self: &Self) -> u64;
+    fn request_error_cache_duration(self: &Self) -> usize;
+    fn log_all_error_responses(self: &Self) -> bool;
+    fn redis_scan_count(self: &Self) -> usize;
+    fn feature_flag_nested_decoding(self: &Self) -> bool;
+    fn feature_flag_balances_rate_implementation(self: &Self) -> bool;
+    fn vpc_transaction_service_uri(self: &Self) -> bool;
+    fn concurrent_balance_token_requests(self: &Self) -> usize;
+    fn log_threshold(self: &Self) -> f32;
+    fn build_number(self: &Self) -> Option<String>;
+    fn version(self: &Self) -> String;
 }
 
-pub fn base_config_service_uri() -> String {
-    format!(
-        "{}{}",
-        env::var("CONFIG_SERVICE_URI").expect("CONFIG_SERVICE_URI missing in env"),
-        "/api"
-    )
+struct DefaultConfiguration {}
+
+lazy_static! {
+    pub static ref DEFAULT_CONFIGURATION: Box<dyn Configuration + Sync> =
+        Box::new(DefaultConfiguration {});
 }
 
-pub fn base_exchange_api_uri() -> String {
-    format!(
-        "{}?access_key={}",
-        env::var("EXCHANGE_API_BASE_URI").unwrap(),
-        env::var("EXCHANGE_API_KEY").unwrap()
-    )
-}
+impl Configuration for DefaultConfiguration {
+    fn redis_uri(self: &Self) -> String {
+        env::var("REDIS_URI").expect("REDIS_URI missing in env")
+    }
 
-pub fn webhook_token() -> String {
-    env::var("WEBHOOK_TOKEN").expect("WEBHOOK_TOKEN missing in env")
-}
+    fn base_config_service_uri(self: &Self) -> String {
+        format!(
+            "{}{}",
+            env::var("CONFIG_SERVICE_URI").expect("CONFIG_SERVICE_URI missing in env"),
+            "/api"
+        )
+    }
 
-pub fn transaction_service_auth_token() -> String {
-    let token = env::var("TRANSACTION_SERVICE_AUTH_TOKEN").unwrap_or_else(|_| {
-        log::warn!("TRANSACTION_SERVICE_AUTH_TOKEN missing in env");
-        String::new()
-    });
-    format!("Token {}", token)
-}
+    fn base_exchange_api_uri(self: &Self) -> String {
+        format!(
+            "{}?access_key={}",
+            env::var("EXCHANGE_API_BASE_URI").unwrap(),
+            env::var("EXCHANGE_API_KEY").unwrap()
+        )
+    }
 
-pub fn scheme() -> String {
-    env_with_default("SCHEME", "https".into())
-}
+    fn webhook_token(self: &Self) -> String {
+        env::var("WEBHOOK_TOKEN").expect("WEBHOOK_TOKEN missing in env")
+    }
 
-// TIME DURATION VALUES
-fn indefinite_timeout() -> usize {
-    env_with_default("INDEFINITE_TIMEOUT", 60 * 60 * 1000)
-}
+    fn transaction_service_auth_token(self: &Self) -> String {
+        let token = env::var("TRANSACTION_SERVICE_AUTH_TOKEN").unwrap_or_else(|_| {
+            log::warn!("TRANSACTION_SERVICE_AUTH_TOKEN missing in env");
+            String::new()
+        });
+        format!("Token {}", token)
+    }
 
-pub fn short_error_duration() -> usize {
-    env_with_default("SHORT_ERROR_DURATION", 60 * 1000)
-}
+    fn scheme(self: &Self) -> String {
+        env_with_default("SCHEME", "https".into())
+    }
 
-pub fn long_error_duration() -> usize {
-    env_with_default("LONG_ERROR_DURATION", 60 * 15 * 1000)
-}
+    // TIME DURATION VALUES
+    fn indefinite_timeout(self: &Self) -> usize {
+        env_with_default("INDEFINITE_TIMEOUT", 60 * 60 * 1000)
+    }
 
-// FUNCTIONAL TIMEOUTS
-pub fn safe_info_cache_duration() -> usize {
-    env_with_default("SAFE_INFO_CACHE_DURATION", indefinite_timeout())
-}
+    fn short_error_duration(self: &Self) -> usize {
+        env_with_default("SHORT_ERROR_DURATION", 60 * 1000)
+    }
 
-pub fn address_info_cache_duration() -> usize {
-    env_with_default("ADDRESS_INFO_CACHE_DURATION", indefinite_timeout())
-}
+    fn long_error_duration(self: &Self) -> usize {
+        env_with_default("LONG_ERROR_DURATION", 60 * 15 * 1000)
+    }
 
-pub fn token_info_cache_duration() -> usize {
-    env_with_default("TOKEN_INFO_CACHE_DURATION", 60 * 60 * 24 * 1000)
-}
+    // FUNCTIONAL TIMEOUTS
+    fn safe_info_cache_duration(self: &Self) -> usize {
+        env_with_default("SAFE_INFO_CACHE_DURATION", self.indefinite_timeout())
+    }
 
-pub fn chain_info_cache_duration() -> usize {
-    env_with_default("CHAIN_INFO_CACHE_DURATION", indefinite_timeout())
-}
+    fn address_info_cache_duration(self: &Self) -> usize {
+        env_with_default("ADDRESS_INFO_CACHE_DURATION", self.indefinite_timeout())
+    }
 
-pub fn chain_info_response_cache_duration() -> usize {
-    env_with_default("CHAIN_INFO_RESPONSE_CACHE_DURATION", 1) // set to negligible value
-}
+    fn token_info_cache_duration(self: &Self) -> usize {
+        env_with_default("TOKEN_INFO_CACHE_DURATION", 60 * 60 * 24 * 1000)
+    }
 
-pub fn exchange_api_cache_duration() -> usize {
-    env_with_default("EXCHANGE_API_CACHE_DURATION", 60 * 60 * 12 * 1000)
-}
+    fn chain_info_cache_duration(self: &Self) -> usize {
+        env_with_default("CHAIN_INFO_CACHE_DURATION", self.indefinite_timeout())
+    }
 
-pub fn request_cache_duration() -> usize {
-    env_with_default("REQUEST_CACHE_DURATION", indefinite_timeout())
-}
+    fn chain_info_response_cache_duration(self: &Self) -> usize {
+        env_with_default("CHAIN_INFO_RESPONSE_CACHE_DURATION", 1) // set to negligible value
+    }
 
-pub fn about_cache_duration() -> usize {
-    env_with_default("ABOUT_CACHE_DURATION", 60 * 15 * 1000)
-}
+    fn exchange_api_cache_duration(self: &Self) -> usize {
+        env_with_default("EXCHANGE_API_CACHE_DURATION", 60 * 60 * 12 * 1000)
+    }
 
-pub fn balances_cache_duration() -> usize {
-    env_with_default("BALANCES_REQUEST_CACHE_DURATION", 60 * 1000)
-}
+    fn request_cache_duration(self: &Self) -> usize {
+        env_with_default("REQUEST_CACHE_DURATION", self.indefinite_timeout())
+    }
 
-pub fn balances_core_request_cache_duration() -> usize {
-    env_with_default("BALANCES_CORE_REQUEST_CACHE_DURATION", indefinite_timeout())
-}
+    fn about_cache_duration(self: &Self) -> usize {
+        env_with_default("ABOUT_CACHE_DURATION", 60 * 15 * 1000)
+    }
 
-pub fn safe_app_manifest_cache_duration() -> usize {
-    env_with_default("SAFE_APP_MANIFEST_CACHE_DURATION", indefinite_timeout())
-}
+    fn balances_cache_duration(self: &Self) -> usize {
+        env_with_default("BALANCES_REQUEST_CACHE_DURATION", 60 * 1000)
+    }
 
-pub fn owners_for_safes_cache_duration() -> usize {
-    env_with_default("OWNERS_FOR_SAFES_CACHE_DURATION", 60 * 1000)
-}
+    fn balances_core_request_cache_duration(self: &Self) -> usize {
+        env_with_default(
+            "BALANCES_CORE_REQUEST_CACHE_DURATION",
+            self.indefinite_timeout(),
+        )
+    }
 
-pub fn safe_apps_cache_duration() -> usize {
-    env_with_default("SAFE_APPS_CACHE_DURATION", indefinite_timeout())
-}
+    fn safe_app_manifest_cache_duration(self: &Self) -> usize {
+        env_with_default(
+            "SAFE_APP_MANIFEST_CACHE_DURATION",
+            self.indefinite_timeout(),
+        )
+    }
 
-pub fn token_price_cache_duration() -> usize {
-    env_with_default("TOKEN_PRICE_CACHE_DURATION", 10 * 1000)
-}
+    fn owners_for_safes_cache_duration(self: &Self) -> usize {
+        env_with_default("OWNERS_FOR_SAFES_CACHE_DURATION", 60 * 1000)
+    }
 
-pub fn tx_queued_cache_duration() -> usize {
-    env_with_default("TX_QUEUED_CACHE_DURATION", request_cache_duration())
-}
+    fn safe_apps_cache_duration(self: &Self) -> usize {
+        env_with_default("SAFE_APPS_CACHE_DURATION", self.indefinite_timeout())
+    }
 
-// REQUEST TIMEOUTS
-pub fn internal_client_connect_timeout() -> u64 {
-    env_with_default("INTERNAL_CLIENT_CONNECT_TIMEOUT", 1000)
-}
+    fn token_price_cache_duration(self: &Self) -> usize {
+        env_with_default("TOKEN_PRICE_CACHE_DURATION", 10 * 1000)
+    }
 
-pub fn safe_app_info_request_timeout() -> u64 {
-    env_with_default("SAFE_APP_INFO_REQUEST_TIMEOUT", 3000)
-}
+    fn tx_queued_cache_duration(self: &Self) -> usize {
+        env_with_default("TX_QUEUED_CACHE_DURATION", self.request_cache_duration())
+    }
 
-pub fn transaction_request_timeout() -> u64 {
-    env_with_default("TRANSACTION_REQUEST_TIMEOUT", 30000)
-}
+    // REQUEST TIMEOUTS
+    fn internal_client_connect_timeout(self: &Self) -> u64 {
+        env_with_default("INTERNAL_CLIENT_CONNECT_TIMEOUT", 1000)
+    }
 
-pub fn safe_info_request_timeout() -> u64 {
-    env_with_default("SAFE_INFO_REQUEST_TIMEOUT", 10000)
-}
+    fn safe_app_info_request_timeout(self: &Self) -> u64 {
+        env_with_default("SAFE_APP_INFO_REQUEST_TIMEOUT", 3000)
+    }
 
-pub fn token_info_request_timeout() -> u64 {
-    env_with_default("TOKEN_INFO_REQUEST_TIMEOUT", 15000)
-}
+    fn transaction_request_timeout(self: &Self) -> u64 {
+        env_with_default("TRANSACTION_REQUEST_TIMEOUT", 30000)
+    }
 
-pub fn chain_info_request_timeout() -> u64 {
-    env_with_default("CHAIN_INFO_REQUEST_TIMEOUT", 15000)
-}
+    fn safe_info_request_timeout(self: &Self) -> u64 {
+        env_with_default("SAFE_INFO_REQUEST_TIMEOUT", 10000)
+    }
 
-pub fn contract_info_request_timeout() -> u64 {
-    env_with_default("CONTRACT_INFO_REQUEST_TIMEOUT", 3000)
-}
+    fn token_info_request_timeout(self: &Self) -> u64 {
+        env_with_default("TOKEN_INFO_REQUEST_TIMEOUT", 15000)
+    }
 
-pub fn balances_request_timeout() -> u64 {
-    env_with_default("BALANCES_REQUEST_TIMEOUT", 20000)
-}
+    fn chain_info_request_timeout(self: &Self) -> u64 {
+        env_with_default("CHAIN_INFO_REQUEST_TIMEOUT", 15000)
+    }
 
-pub fn collectibles_request_timeout() -> u64 {
-    env_with_default("COLLECTIBLES_REQUEST_TIMEOUT", 20000)
-}
+    fn contract_info_request_timeout(self: &Self) -> u64 {
+        env_with_default("CONTRACT_INFO_REQUEST_TIMEOUT", 3000)
+    }
 
-pub fn default_request_timeout() -> u64 {
-    env_with_default("DEFAULT_REQUEST_TIMEOUT", 10000)
-}
+    fn balances_request_timeout(self: &Self) -> u64 {
+        env_with_default("BALANCES_REQUEST_TIMEOUT", 20000)
+    }
 
-// ERRORS
-pub fn request_error_cache_duration() -> usize {
-    env_with_default("REQS_ERROR_CACHE_DURATION", short_error_duration())
-}
+    fn collectibles_request_timeout(self: &Self) -> u64 {
+        env_with_default("COLLECTIBLES_REQUEST_TIMEOUT", 20000)
+    }
 
-pub fn log_all_error_responses() -> bool {
-    env_with_default("LOG_ALL_ERROR_RESPONSES", false)
-}
+    fn default_request_timeout(self: &Self) -> u64 {
+        env_with_default("DEFAULT_REQUEST_TIMEOUT", 10000)
+    }
 
-// OTHERS
-pub fn redis_scan_count() -> usize {
-    env_with_default("REDIS_SCAN_COUNT", 300)
-}
+    // ERRORS
+    fn request_error_cache_duration(self: &Self) -> usize {
+        env_with_default("REQS_ERROR_CACHE_DURATION", self.short_error_duration())
+    }
 
-pub fn feature_flag_nested_decoding() -> bool {
-    env_with_default("FEATURE_FLAG_NESTED_DECODING", true)
-}
+    fn log_all_error_responses(self: &Self) -> bool {
+        env_with_default("LOG_ALL_ERROR_RESPONSES", false)
+    }
 
-pub fn feature_flag_balances_rate_implementation() -> bool {
-    env_with_default("FEATURE_FLAG_BALANCES_RATE_IMPLEMENTATION", false)
-}
+    // OTHERS
+    fn redis_scan_count(self: &Self) -> usize {
+        env_with_default("REDIS_SCAN_COUNT", 300)
+    }
 
-pub fn vpc_transaction_service_uri() -> bool {
-    env_with_default("VPC_TRANSACTION_SERVICE_URI", true)
-}
+    fn feature_flag_nested_decoding(self: &Self) -> bool {
+        env_with_default("FEATURE_FLAG_NESTED_DECODING", true)
+    }
 
-pub fn concurrent_balance_token_requests() -> usize {
-    env_with_default("CONCURRENT_BALANCE_TOKEN_REQUESTS", 5)
-}
+    fn feature_flag_balances_rate_implementation(self: &Self) -> bool {
+        env_with_default("FEATURE_FLAG_BALANCES_RATE_IMPLEMENTATION", false)
+    }
 
-pub fn log_threshold() -> f32 {
-    env_with_default("LOG_THRESHOLD", 1.0)
-}
+    fn vpc_transaction_service_uri(self: &Self) -> bool {
+        env_with_default("VPC_TRANSACTION_SERVICE_URI", true)
+    }
 
-pub fn build_number() -> Option<String> {
-    option_env!("BUILD_NUMBER").map(|it| it.to_string())
-}
+    fn concurrent_balance_token_requests(self: &Self) -> usize {
+        env_with_default("CONCURRENT_BALANCE_TOKEN_REQUESTS", 5)
+    }
 
-pub fn version() -> String {
-    option_env!("VERSION")
-        .unwrap_or(env!("CARGO_PKG_VERSION"))
-        .to_string()
+    fn log_threshold(self: &Self) -> f32 {
+        env_with_default("LOG_THRESHOLD", 1.0)
+    }
+
+    fn build_number(self: &Self) -> Option<String> {
+        option_env!("BUILD_NUMBER").map(|it| it.to_string())
+    }
+
+    fn version(self: &Self) -> String {
+        option_env!("VERSION")
+            .unwrap_or(env!("CARGO_PKG_VERSION"))
+            .to_string()
+    }
 }
 
 fn env_with_default<T: FromStr>(key: &str, default: T) -> T
