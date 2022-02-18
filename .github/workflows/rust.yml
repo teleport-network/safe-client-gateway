@@ -13,15 +13,10 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v2
 
-      - name: Set variables
-        run: |
-          echo "TOOLCHAIN=$(rustup show active-toolchain | cut -d " " -f1)" >> $GITHUB_ENV
-
       - name: Install toolchain
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: ${{ env.TOOLCHAIN }}
           override: true
           components: rustfmt
 
