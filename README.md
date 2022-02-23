@@ -24,6 +24,16 @@ cargo run
 ./add_rustfmt_git_hook.sh  # It installs a git precommit hook that will autoformat the code on every commit
 ```
 
+In order to run this project's features (e.g. `dashboard` ) you can do it like so:
+```bash
+cargo run --features dashboard
+```
+
+Or if you want to enable all the available features (You can find a list in the `[features]` section of the project `Cargo.toml` file)
+```bash
+cargo run --all-features
+```
+
 After doing any change code must be formatted using [Rustfmt](https://github.com/rust-lang/rustfmt)
 - `cargo +nightly fmt --all`
 Auto formatting can also [be configured in the most common code editors](https://github.com/rust-lang/rustfmt#running-rustfmt-from-your-editor)
