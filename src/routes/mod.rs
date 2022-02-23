@@ -75,11 +75,10 @@ pub fn active_routes() -> Vec<Route> {
 
     #[cfg(feature = "dashboard")]
     {
-        log::error!("I PASSED THROUGH HERE!");
         routes.append(&mut routes![dashboard::routes::get_dashboard]);
     }
 
-    routes
+    return routes;
 }
 
 #[doc(hidden)]
