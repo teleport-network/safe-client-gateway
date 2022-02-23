@@ -30,9 +30,12 @@ pub mod safes;
 /// The types served by the gate way are `Transfer`, `SettingsChange` and `Custom`. Additionally, we treat the `Creation` transaction as one additional type, as it is meant to be group with the rest of the items in the same UI component in the apps.
 pub mod transactions;
 
+#[cfg(feature = "dashboard")]
+pub mod dashboard;
+
 #[doc(hidden)]
 pub fn active_routes() -> Vec<Route> {
-    routes![
+    let mut routes = routes![
         root,
         about::routes::backbone,
         about::routes::get_about,
@@ -68,7 +71,15 @@ pub fn active_routes() -> Vec<Route> {
         hooks::routes::post_flush_events,
         hooks::routes::flush,
         health::routes::health
-    ]
+    ];
+
+    #[cfg(feature = "dashboard")]
+    {
+        log::error!("I PASSED THROUGH HERE!");
+        routes.append(&mut routes![dashboard::routes::get_dashboard]);
+    }
+
+    routes
 }
 
 #[doc(hidden)]
