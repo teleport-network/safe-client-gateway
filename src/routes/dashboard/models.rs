@@ -1,3 +1,5 @@
+use crate::routes::safe_apps::models::SafeApp;
+use crate::routes::safes::models::SafeState;
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -6,7 +8,7 @@ pub enum DashboardUiComponent {
     LatestExecutedTxs,
     PendingTxs,
     TokenBalances,
-    SafeApps,
-    Safe,
+    SafeApps(Vec<SafeApp>),
+    Safe(SafeState),
     NFTSs,
 }
