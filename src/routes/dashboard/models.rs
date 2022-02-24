@@ -1,3 +1,4 @@
+use crate::routes::balances::models::Balances;
 use crate::routes::safe_apps::models::SafeApp;
 use crate::routes::safes::models::SafeState;
 use serde::Serialize;
@@ -8,7 +9,7 @@ use serde_json::value::RawValue;
 pub enum DashboardUiComponent {
     LatestExecutedTxs,
     PendingTxs,
-    TokenBalances,
+    Balances(Balances),
     SafeApps(Vec<SafeApp>),
     Safe(SafeState),
     Collectibles(Box<RawValue>),

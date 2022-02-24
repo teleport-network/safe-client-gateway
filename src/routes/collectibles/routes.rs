@@ -159,8 +159,8 @@ pub async fn get_collectibles(
         &context,
         chain_id.as_str(),
         safe_address.as_str(),
-        trusted,
-        exclude_spam,
+        &trusted,
+        &exclude_spam,
     )
     .await
 }

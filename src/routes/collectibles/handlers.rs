@@ -10,8 +10,8 @@ pub async fn collectibles(
     context: &RequestContext,
     chain_id: &str,
     safe_address: &str,
-    trusted: Option<bool>,
-    exclude_spam: Option<bool>,
+    trusted: &Option<bool>,
+    exclude_spam: &Option<bool>,
 ) -> ApiResult<Json<String>> {
     let info_provider = DefaultInfoProvider::new(chain_id, &context);
 
