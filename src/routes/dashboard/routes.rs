@@ -5,7 +5,7 @@ use crate::utils::errors::ApiResult;
 use rocket::response::content;
 
 #[get(
-    "/v1/chains/<chain_id>/safes/<safe_address>/dashboard?<fiat>&<trusted_tokens>&<exclude_spam_tokens>"
+    "/v1/chains/<chain_id>/safes/<safe_address>/dashboard?<fiat>&<trusted_tokens>&<exclude_spam_tokens>&<timezone_offset>"
 )]
 pub async fn get_dashboard(
     context: RequestContext,
@@ -14,6 +14,7 @@ pub async fn get_dashboard(
     fiat: Option<String>,
     trusted_tokens: Option<bool>,
     exclude_spam_tokens: Option<bool>,
+    timezone_offset: Option<String>,
 ) -> ApiResult<content::Json<String>> {
     CacheResponse::new(&context)
         .resp_generator(|| {
@@ -24,6 +25,7 @@ pub async fn get_dashboard(
                 &fiat,
                 &trusted_tokens,
                 &exclude_spam_tokens,
+                &timezone_offset,
             )
         })
         .execute()
