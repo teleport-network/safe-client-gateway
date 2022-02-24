@@ -11,4 +11,5 @@ pub enum DashboardUiComponent {
     SafeApps(Vec<SafeApp>),
     Safe(SafeState),
     NFTSs,
+    ErrorLoadingComponent,
 }
