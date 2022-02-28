@@ -36,7 +36,7 @@ pub mod dashboard;
 #[doc(hidden)]
 pub fn active_routes() -> Vec<Route> {
     let mut routes = routes![
-        root,
+        // root,
         about::routes::backbone,
         about::routes::get_about,
         about::routes::get_chains_about,
